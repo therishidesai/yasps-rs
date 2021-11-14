@@ -1,29 +1,30 @@
 {
-  description = "A shared memory pub/sub system";
-
-  outputs = { self, nixpkgs }: {
-    packages.x86_64-linux.abacus-c =
-      let pkgs = import nixpkgs {
-            system = "x86_64-linux";
-          };
-          stdenv = pkgs.clangStdenv;
-      in stdenv.mkDerivation {
-        pname = "yasps";
-        version = "0.0.1";
-        src = ./.;
-
-        buildPhase = ''
-                   # make
-                   # make samples
-        '';
-
-        installPhase = ''
-                     mkdir -p $out/bin
-                     # cp yasps-example $out/bin/.
-        '';
-      };
-
-    # Specify the default package
-    defaultPackage.x86_64-linux = self.packages.x86_64-linux.yasps;
+  inputs = {
+    utils.url = "github:numtide/flake-utils";
+    naersk.url = "github:nmattia/naersk";
   };
+
+  outputs = { self, nixpkgs, utils, naersk }:
+    utils.lib.eachDefaultSystem (system: let
+      pkgs = nixpkgs.legacyPackages."${system}";
+      naersk-lib = naersk.lib."${system}";
+    in rec {
+      # `nix build`
+      packages.yasps = naersk-lib.buildPackage {
+        pname = "yasps";
+        root = ./.;
+      };
+      defaultPackage = packages.yasps;
+
+      # `nix run`
+      apps.yasps = utils.lib.mkApp {
+        drv = packages.yasps;
+      };
+      defaultApp = apps.yasps;
+
+      # `nix develop`
+      devShell = pkgs.mkShell {
+        nativeBuildInputs = with pkgs; [ rustc cargo ];
+      };
+    });
 }
