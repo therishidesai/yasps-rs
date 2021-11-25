@@ -1,3 +1,6 @@
+
+pub mod server_types;
+
 #[cfg(test)]
 mod tests {
     #[test]
