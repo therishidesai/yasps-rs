@@ -9,7 +9,6 @@ use tokio::net::TcpListener;
 use std::env;
 use std::error::Error;
 
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let addr = env::args()
@@ -35,32 +34,30 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     return;
                 }
 
-				println!("received {} bytes", n);
-				let req: TopicReq = serde_cbor::from_slice(&buf[0..n]).unwrap();
-				match req.req_type {
-					ReqType::Publisher => {
-						// TODO: check if publisher exists, if it does return TopicRes with None topic
-						//       if it doesn't exist, create eventfd and shared mem queue
-						let res = TopicRes {
-							topic: Some(req.topic),
-						};
-						let res_v = serde_cbor::to_vec(&res).unwrap();
-						socket
-							.write_all(&res_v)
-							.await
-							.expect("failed to write data to socket");
-						
-					},
+                println!("received {} bytes", n);
+                let req: TopicReq = serde_cbor::from_slice(&buf[0..n]).unwrap();
+                match req.req_type {
+                    ReqType::Publisher => {
+                        // TODO: check if publisher exists, if it does return TopicRes with None topic
+                        //       if it doesn't exist, create eventfd and shared mem queue
+                        let res = TopicRes {
+                            topic: Some(req.topic),
+                        };
+                        let res_v = serde_cbor::to_vec(&res).unwrap();
+                        socket
+                            .write_all(&res_v)
+                            .await
+                            .expect("failed to write data to socket");
+                    }
 
-					ReqType::Subscriber => {
-						// TODO: check if publisher exists for this topic, if not return TopicRes with None topic
-						socket
-							.write_all(&buf[0..n])
-							.await
-							.expect("failed to write data to socket");
-					}
-				}
-
+                    ReqType::Subscriber => {
+                        // TODO: check if publisher exists for this topic, if not return TopicRes with None topic
+                        socket
+                            .write_all(&buf[0..n])
+                            .await
+                            .expect("failed to write data to socket");
+                    }
+                }
             }
         });
     }

@@ -1,4 +1,3 @@
-
 pub mod server_types;
 
 #[cfg(test)]

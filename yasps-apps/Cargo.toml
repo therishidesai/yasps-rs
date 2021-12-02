@@ -3,6 +3,7 @@ name = "yasps-apps"
 version = "0.1.0"
 edition = "2021"
 
+
 [dependencies]
 tokio = { version = "1.14.0", features = ["full"] }
 serde = "1.0.130"
