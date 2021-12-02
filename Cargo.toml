@@ -1,13 +1,9 @@
-[package]
-name = "yasps"
-version = "0.1.0"
-edition = "2018"
+[workspace]
+members = [
+	"yasps",
+	"yasps-apps",
+	"yasps-broker",
+]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-libc = "0.2.107"
-tokio = { version = "1.14.0", features = ["full"] }
-serde = "1.0.130"
-serde_cbor = "0.11.2"
-serde_derive = "1.0.130"
+[profile.release]
+debug=true
