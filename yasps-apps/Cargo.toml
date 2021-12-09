@@ -13,7 +13,9 @@ yasps = { version = "0.1.0", path = "../yasps" }
 libc = "0.2.107"
 mio = { version = "0.8.0", features = ["os-ext"] }
 anyhow = "1.0.51"
-
+tokio-eventfd = "0.2.0"
+nix = "0.23.0"
+linux-futex = "0.1.1"
 
 [[bin]]
 name = "simple-client"
@@ -23,4 +25,9 @@ doc = false
 [[bin]]
 name = "mio-exp"
 path = "mio-experiments/main.rs"
+doc = false
+
+[[bin]]
+name = "futures-exp"
+path = "futures-exp/main.rs"
 doc = false
