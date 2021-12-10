@@ -1,24 +1,19 @@
 ## Initial Design
 
 - shm for pub/sub queues
-- new publishers creates new queues
-- create eventfd per topic
+- create queue and wakeup futex per topic when publisher registers topic
+  - do all of these with helper functions
+	- optional: request broker to see if topic exists
+	- publisher will have to shm_open to create the shared memory fd
+    - publisher will ftruncate the fd to set the size of the shared memory region
+	- publisher will mmap the shm fd to begin accessing the data in its address space
+	- publisher sets up the data structure of the wakeup futex and the queue 
 - subscriber callbacks
-	- request publisher info from broker
-		- this is the eventfd and the read end of the queue data structure
-	- similar to tokio::spawn write the callback and have it await on data from the pub queue
-	- the await is actually on an event from the eventfd underlying the system
-- central broker to hold topic info (eventfd's, shm, etc.)
-	- Pros:
-		- easy implementation
-	- Cons:
-		- single point of failure
-- block publisher until last subscriber has read from buffer
-	- put eventfd in EFD_NONBLOCKING and EFD_SEMAPHORE
-	- publisher sets eventfd to number of subscribers
-	- each read by a subscriber will decrement the eventfd by 1
-	- publisher will block on next write until eventfd is 0
-		- could just have the publisher still write to the queue and once eventfd is ready update the pointer for the top and signal the eventfd
-## Questions/Future Ideas
-- How to handle waiting on subscribers before overwriting parts of the buffer?
-- turn this into an async executor in rust
+  - do all of these with helper functions
+	- optional: request broker to see if topic exists
+	- shm open the file (topic name = file name) and get the fd
+	- mmap the shm fd so it can start using it 
+  - tokio spawn the actual callback and then await on the futex to be woken up when there is data
+- broker is just a key value store of topics 
+  - not required to run since the shared memory segments are just topic names
+  - could use some other mechanism to manage topic names
