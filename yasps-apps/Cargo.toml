@@ -28,6 +28,11 @@ path = "mio-experiments/main.rs"
 doc = false
 
 [[bin]]
+name = "shmem-test"
+path = "shmem-test/main.rs"
+doc = false
+
+[[bin]]
 name = "futures-exp"
 path = "futures-exp/main.rs"
 doc = false
