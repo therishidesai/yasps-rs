@@ -16,6 +16,7 @@ anyhow = "1.0.51"
 tokio-eventfd = "0.2.0"
 nix = "0.23.0"
 linux-futex = "0.1.1"
+shared_memory = "0.12.2"
 
 [[bin]]
 name = "simple-client"
